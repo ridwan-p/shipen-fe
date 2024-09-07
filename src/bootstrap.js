@@ -1,4 +1,4 @@
-
+// chart register 
 import { ChartComponent } from "./components/Chart/ChartJs";
 import { 
   BarController, 

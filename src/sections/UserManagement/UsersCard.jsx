@@ -1,6 +1,23 @@
-import { Button, Card, Form, InputGroup, Table } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Card, Dropdown, Form, InputGroup, Table } from "react-bootstrap";
+import * as usersService from '../../services/user-management/users';
 
-const UsersCard = (props) => {
+const UsersCard = () => {
+  const [users, setUsers] = useState({ data: [] })
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  const getUsers = async () => {
+    try {
+      const { data } = await usersService.getUsers();
+      setUsers(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <Card className="border-0 shadow-sm">
       <Card.Body className="p-4">
@@ -15,7 +32,7 @@ const UsersCard = (props) => {
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <div>
-            <div><strong>All Users</strong> 32</div>
+            <div><span className="fw-medium">All Users</span> 32</div>
           </div>
           <div>
             <InputGroup>
@@ -28,26 +45,44 @@ const UsersCard = (props) => {
           <Table striped hover responsive className="mt-4">
             <thead>
               <tr>
-                <th><Form.Check /></th>
+                <th className="align-middle"><Form.Check /></th>
                 <th>Username</th>
-                <th>Email</th>
                 <th>Role</th>
-                <th>Actions</th>
+                <th>Last active</th>
+                <th>Date added</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>admin</td>
-                <td>
-                  <a href="mailto:" />
-                </td>
-                <td>Admin</td>
-                <td>
-                  <Button variant="outline-primary">Edit</Button>
-                  <Button variant="outline-danger">Delete</Button>
-                </td>
-              </tr>
+              {
+                users.data.map((user, key) => {
+
+                  return (
+                    <tr key={key}>
+                      <th className="align-middle"><Form.Check /></th>
+                      <td>
+                        <div className="fw-medium">{user.fullName}</div>
+                        <div>{user.email}</div>
+                      </td>
+                      <td>{user.role}</td>
+                      <td>{user.lastLogin}</td>
+                      <td>{user.createdAt}</td>
+                      <td>
+                        <Dropdown>
+                          <Dropdown.Toggle variant="success">
+                            <i className="bi bi-three-dots-vertical"></i>
+                          </Dropdown.Toggle>
+
+                          <Dropdown.Menu>
+                            <Dropdown.Item href="#/action-1">Edit</Dropdown.Item>
+                            <Dropdown.Item href="#/action-2">Delete</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  )
+                })
+              }
             </tbody>
           </Table>
         </div>
